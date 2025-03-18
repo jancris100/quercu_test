@@ -1,0 +1,6 @@
+@quercu_test.Server_HostAddress = http://localhost:5135
+
+GET {{quercu_test.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
