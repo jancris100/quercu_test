@@ -26,6 +26,18 @@ namespace quercu_test.Server.Data
                 .WithMany()
                 .HasForeignKey(p => p.PropertyTypeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PropertyType>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Owner>()
+                .Property(o => o.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Property>()
+                .Property(pr => pr.Id)
+                .ValueGeneratedOnAdd();
         }
     }
 }
