@@ -11,5 +11,6 @@ namespace quercu_test.Server.Models
 
         [Required, MinLength(3)]
         public string Description { get; set; } = string.Empty;
+
     }
 }

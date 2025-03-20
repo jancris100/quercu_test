@@ -1,21 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace quercu_test.Server.Models
+namespace quercu_test.Server.DTOS
 {
-    public class Property
+    public class PropertyCreateDto
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         [Required]
         public int PropertyTypeId { get; set; }
 
         [Required]
         public int OwnerId { get; set; }
 
-        [Required, MinLength(1)] 
+        [Required, MinLength(1)]
         public string Number { get; set; } = string.Empty;
 
         [Required, MinLength(5)]
@@ -25,8 +20,5 @@ namespace quercu_test.Server.Models
         public decimal Area { get; set; }
 
         public decimal? ConstructionArea { get; set; }
-
-        public Owner Owner { get; set; } = null!;
-        public PropertyType PropertyType { get; set; } = null!;
     }
 }

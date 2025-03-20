@@ -39,6 +39,7 @@ namespace quercu_test.Server.Controllers
 
         // POST: api/PropertyType
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<PropertyType>> PostPropertyType(PropertyType propertyType)
         {
             _context.PropertyTypes.Add(propertyType);
@@ -87,12 +88,20 @@ namespace quercu_test.Server.Controllers
                 return NotFound();
             }
 
+            bool isUsed = await _context.Properties.AnyAsync(p => p.PropertyTypeId == id);
+            if (isUsed)
+            {
+                return Conflict(new
+                {
+                    message = $"No se puede eliminar '{propertyType.Description}' porque está siendo usado en propiedades"
+                });
+            }
+
             _context.PropertyTypes.Remove(propertyType);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-
         private bool PropertyTypeExists(int id)
         {
             return _context.PropertyTypes.Any(e => e.Id == id);

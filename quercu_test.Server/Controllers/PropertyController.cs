@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using quercu_test.Server.Data;
+using quercu_test.Server.DTOS;
 using quercu_test.Server.Models;
 
 namespace quercu_test.Server.Controllers
@@ -40,24 +41,65 @@ namespace quercu_test.Server.Controllers
 
         // POST: api/Property
         [HttpPost]
-        public async Task<ActionResult<Property>> PostProperty(Property property)
+        public async Task<ActionResult<Property>> PostProperty([FromBody] PropertyCreateDto dto)
         {
+            var property = new Property
+            {
+                PropertyTypeId = dto.PropertyTypeId,
+                OwnerId = dto.OwnerId,
+                Number = dto.Number,
+                Address = dto.Address,
+                Area = dto.Area,
+                ConstructionArea = dto.ConstructionArea
+            };
+
+            if (!await _context.Owners.AnyAsync(o => o.Id == dto.OwnerId))
+            {
+                return BadRequest("El dueño especificado no existe");
+            }
+
+            if (!await _context.PropertyTypes.AnyAsync(t => t.Id == dto.PropertyTypeId))
+            {
+                return BadRequest("El tipo de propiedad especificado no existe");
+            }
+
             _context.Properties.Add(property);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetProperty), new { id = property.Id }, property);
+            return CreatedAtAction("GetProperty", new { id = property.Id }, property);
         }
 
         // PUT: api/Property/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProperty(int id, Property property)
+        public async Task<IActionResult> PutProperty(int id, [FromBody] PropertyUpdateDto dto)
         {
-            if (id != property.Id)
+            if (id != dto.Id)
             {
-                return BadRequest();
+                return BadRequest("ID mismatch");
             }
 
-            _context.Entry(property).State = EntityState.Modified;
+            var property = await _context.Properties.FindAsync(id);
+            if (property == null)
+            {
+                return NotFound();
+            }
+
+            if (!await _context.PropertyTypes.AnyAsync(pt => pt.Id == dto.PropertyTypeId))
+            {
+                return BadRequest("Tipo de propiedad no válido");
+            }
+
+            if (!await _context.Owners.AnyAsync(o => o.Id == dto.OwnerId))
+            {
+                return BadRequest("Dueño no válido");
+            }
+
+            property.PropertyTypeId = dto.PropertyTypeId;
+            property.OwnerId = dto.OwnerId;
+            property.Number = dto.Number;
+            property.Address = dto.Address;
+            property.Area = dto.Area;
+            property.ConstructionArea = dto.ConstructionArea;
 
             try
             {
@@ -65,7 +107,7 @@ namespace quercu_test.Server.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PropertyExists(id))
+                if (!PropertyExistsInDatabase(id))
                 {
                     return NotFound();
                 }
@@ -77,6 +119,12 @@ namespace quercu_test.Server.Controllers
 
             return NoContent();
         }
+
+        private bool PropertyExistsInDatabase(int id)
+        {
+            return _context.Properties.Any(e => e.Id == id);
+        }
+
 
         // DELETE: api/Property/5
         [HttpDelete("{id}")]

@@ -19,13 +19,15 @@ namespace quercu_test.Server.Data
                 .HasOne(p => p.Owner)
                 .WithMany()
                 .HasForeignKey(p => p.OwnerId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Property>()
                 .HasOne(p => p.PropertyType)
                 .WithMany()
                 .HasForeignKey(p => p.PropertyTypeId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PropertyType>()
                 .Property(p => p.Id)

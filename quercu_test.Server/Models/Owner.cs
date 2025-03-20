@@ -22,5 +22,6 @@ namespace quercu_test.Server.Models
         public string IdentificationNumber { get; set; } = string.Empty;
 
         public string? Address { get; set; }
+
     }
 }

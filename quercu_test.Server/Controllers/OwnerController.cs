@@ -39,8 +39,15 @@ namespace quercu_test.Server.Controllers
 
         // POST: api/Owner
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<Owner>> PostOwner(Owner owner)
         {
+
+            if (await _context.Owners.AnyAsync(o => o.IdentificationNumber == owner.IdentificationNumber))
+            {
+                return BadRequest(new { message = "El número de identificación ya está registrado" });
+            }
+
             _context.Owners.Add(owner);
             await _context.SaveChangesAsync();
 
@@ -54,6 +61,14 @@ namespace quercu_test.Server.Controllers
             if (id != owner.Id)
             {
                 return BadRequest();
+            }
+
+            var existing = await _context.Owners
+            .FirstOrDefaultAsync(o => o.IdentificationNumber == owner.IdentificationNumber && o.Id != id);
+
+            if (existing != null)
+            {
+                return BadRequest(new { message = "El número de identificación ya está registrado" });
             }
 
             _context.Entry(owner).State = EntityState.Modified;
@@ -85,6 +100,15 @@ namespace quercu_test.Server.Controllers
             if (owner == null)
             {
                 return NotFound();
+            }
+
+            bool hasProperties = await _context.Properties.AnyAsync(p => p.OwnerId == id);
+            if (hasProperties)
+            {
+                return Conflict(new
+                {
+                    message = $"No se puede eliminar a {owner.Name} porque tiene propiedades registradas"
+                });
             }
 
             _context.Owners.Remove(owner);
