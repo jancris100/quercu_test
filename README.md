@@ -1,52 +1,72 @@
-# Sistema de Gestión de Propiedades FUNCIONAL AL 100
+Sistema de Gestión de Propiedades ✨🛠️
 
 [![.NET Core](https://img.shields.io/badge/.NET%20Core-8.0-blue)](https://dotnet.microsoft.com/)
 [![Angular](https://img.shields.io/badge/Angular-16+-red)](https://angular.io/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-- **Backend**: .NET Core 8 Web API
-- **Frontend**: Angular 19
-- **Base de datos**: MySQL
 
-POR SI SON NECESARIOS
-## Requisitos Previos 📋
+🛠️ Tecnologías Utilizadas
 
-- [.NET Core SDK 8.0](https://dotnet.microsoft.com/download)
-- [Node.js 16+](https://nodejs.org/)
-- [Angular CLI 16+](https://angular.io/cli)
-- [MySQL/MariaDB](https://www.mysql.com/) o [SQL Server](https://www.microsoft.com/sql-server)
-- [Git](https://git-scm.com/)
+Backend: .NET Core 8 Web API
 
-## Installation
-1. BASE DE DATOS
-El query de la base de datos
-queryDbb.sql
+Frontend: Angular 19
 
-Tambien se puede usar los Identity de ASP.net core
-- dotnet ef migrations add InitialCreate
-- dotnet ef database update
-  
-## NOTA: PROCUTAR TENER LA BASE DE DATOS ANTES CREADA PARA LOS MIGRATIONS SI NO USAR EL QUERY
+Base de datos: MySQL
 
-"ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=tu_db;User=tu_usuario;Password=tu_password;"
-}
+📝 Requisitos Previos
 
-2. El file llamado environment.ts se encuentra en el cliente
-- quercu_test.client/environment.ts
-- Por defecto   apiUrl: 'https://localhost:7046/api'
-- Seria la conexion al backend de ASP.net core
-- Cambiar el puerto si es necesario
+.NET Core SDK 8.0
 
-3. En el cliente quercu_test.client/src/proxy.conf.js
-- Aqui vienen los permisos de conexion al backend de ASP.NET CORE
-- 'https://localhost:7046'; cambiar al puerto ya sea necesario
+Node.js 16+
 
-4. Para ejecutar los test entrar al proyecto
-- quercu_test.Tests
-- Ejecutar el siguiente comando
-- dotnet test
+Angular CLI 16+
 
-## CONSIDERACIONES
-- Ya el proyecto cuenta con Validaciones de formularios de información
-- Tambien diseño responsivo usando Bootstrap
+MySQL/MariaDB o SQL Server
+
+Git
+
+🚀 Instalación
+
+1️⃣ Base de Datos
+
+El archivo con el script de la base de datos se encuentra en queryDbb.sql.
+
+También se pueden utilizar los Identity de ASP.NET Core con los siguientes comandos:
+
+Nota: Es importante tener la base de datos creada antes de ejecutar las migraciones.
+
+🔧 Configuración de la conexión en appsettings.json
+
+2️⃣ Configuración del Cliente (Frontend)
+
+🛠️ Archivo environment.ts
+
+Ubicación: quercu_test.client/environment.ts
+
+Por defecto:
+
+Es la conexión al backend de ASP.NET Core.
+
+Se debe cambiar el puerto si es necesario.
+
+🔧 Archivo proxy.conf.js para permisos de conexión
+
+Ubicación: quercu_test.client/src/proxy.conf.js
+
+Modificar si el puerto del backend es diferente:
+
+3️⃣ Ejecutar las Pruebas Unitarias
+
+Para ejecutar las pruebas unitarias:
+
+Ingresar al directorio del proyecto de pruebas:
+
+Ejecutar el siguiente comando:
+
+💪 Consideraciones
+
+✅ El proyecto ya cuenta con validaciones de formularios.
+
+🏡 También se ha implementado un diseño responsivo utilizando Bootstrap.
+
+🌟 Listo para usar! 🚀🚀
