@@ -1,0 +1,30 @@
+-- CREAR BASE DE DATOS
+CREATE DATABASE quercu_test_dbb;
+USE quercu_test_dbb;
+
+-- CREAR TABLAS
+CREATE TABLE PropertyTypes (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Description VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Owners (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Telephone VARCHAR(255) NOT NULL,
+    Email VARCHAR(255),
+    IdentificationNumber VARCHAR(255) NOT NULL,
+    Address VARCHAR(255)
+);
+
+CREATE TABLE Properties (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    PropertyTypeId INT NOT NULL,
+    OwnerId INT NOT NULL,
+    Number VARCHAR(255) NOT NULL,
+    Address VARCHAR(255) NOT NULL,
+    Area DECIMAL(10,2) NOT NULL,
+    ConstructionArea DECIMAL(10,2),
+    FOREIGN KEY (PropertyTypeId) REFERENCES PropertyType(Id) ON DELETE CASCADE,
+    FOREIGN KEY (OwnerId) REFERENCES Owner(Id) ON DELETE CASCADE
+);

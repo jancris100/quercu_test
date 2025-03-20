@@ -1,0 +1,199 @@
+<div class="container mt-4">
+  <h2>Dueños</h2>
+
+  <!-- Mensajes -->
+  <div *ngIf="showValidationMessage" class="alert alert-danger mb-3">
+    <div *ngIf="requiredFieldsEmpty" class="mb-2">⚠️ Todos los campos obligatorios (*) deben ser completados</div>
+    <ul class="mb-0">
+      <li *ngIf="nameHasError">• El nombre debe tener al menos 3 caracteres</li>
+      <li *ngIf="telephoneHasError">• El teléfono debe tener mínimo 7 números</li>
+      <li *ngIf="identificationHasError">• La identificación debe tener mínimo 5 números</li>
+      <li *ngIf="emailHasError">• Formato de correo electrónico inválido</li>
+      <li *ngIf="identificationError">• El número de identificación ya está registrado</li>
+    </ul>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success mb-3">
+    {{ successMessage }}
+  </div>
+
+  <!-- FORMULARIO PARA AGREGAR -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <input type="text"
+             class="form-control"
+             [(ngModel)]="newOwner.name"
+             (keypress)="onlyLetters($event)"
+             (paste)="onPaste($event, 'text')"
+             placeholder="Nombre *"
+             required
+             minlength="3">
+    </div>
+
+    <div class="col-md-2">
+      <input type="tel"
+             class="form-control"
+             [(ngModel)]="newOwner.telephone"
+             (keypress)="onlyNumbers($event)"
+             (paste)="onPaste($event, 'number')"
+             placeholder="Teléfono *"
+             required
+             pattern="[0-9]+"
+             minlength="7"
+             maxlength="15">
+    </div>
+
+    <div class="col-md-2">
+      <input type="text"
+             class="form-control"
+             [(ngModel)]="newOwner.identificationNumber"
+             (keypress)="onlyNumbers($event)"
+             (paste)="onPaste($event, 'number')"
+             placeholder="N° Identificación *"
+             required
+             pattern="[0-9]+"
+             minlength="5"
+             maxlength="20">
+    </div>
+
+    <div class="col-md-2">
+      <input type="email"
+             class="form-control"
+             [(ngModel)]="newOwner.email"
+             placeholder="Correo electrónico">
+    </div>
+
+    <div class="col-md-2">
+      <input type="text"
+             class="form-control"
+             [(ngModel)]="newOwner.address"
+             placeholder="Dirección">
+    </div>
+
+    <div class="col-md-1">
+      <button class="btn btn-primary w-100"
+              (click)="addOwner()">
+        Agregar
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-responsive">
+    <table *ngIf="dataSource.data.length > 0; else noData"
+           mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+      <!-- COLUMNA No. -->
+      <ng-container matColumnDef="no">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{ dataSource.data.indexOf(element) + 1 }} </td>
+      </ng-container>
+
+      <!-- COLUMNA NOMBRE -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="editingId !== element?.id; else editName">
+            {{ element.name }}
+          </ng-container>
+          <ng-template #editName>
+            <input class="form-control"
+                   [(ngModel)]="element.name"
+                   (keypress)="onlyLetters($event)"
+                   (paste)="onPaste($event, 'text')">
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- COLUMNA TELÉFONO -->
+      <ng-container matColumnDef="telephone">
+        <th mat-header-cell *matHeaderCellDef> Teléfono </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="editingId !== element?.id; else editTel">
+            {{ element.telephone }}
+          </ng-container>
+          <ng-template #editTel>
+            <input class="form-control"
+                   [(ngModel)]="element.telephone"
+                   (keypress)="onlyNumbers($event)"
+                   (paste)="onPaste($event, 'number')">
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- COLUMNA IDENTIFICACIÓN -->
+      <ng-container matColumnDef="identificationNumber">
+        <th mat-header-cell *matHeaderCellDef> Identificación </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="editingId !== element?.id; else editId">
+            {{ element.identificationNumber }}
+          </ng-container>
+          <ng-template #editId>
+            <input class="form-control"
+                   [(ngModel)]="element.identificationNumber"
+                   (keypress)="onlyNumbers($event)"
+                   (paste)="onPaste($event, 'number')">
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- COLUMNA EMAIL -->
+      <ng-container matColumnDef="email">
+  <th mat-header-cell *matHeaderCellDef> Email </th>
+  <td mat-cell *matCellDef="let element">
+    <ng-container *ngIf="editingId !== element?.id; else editEmail">
+      {{ element.email || 'No registrado' }}
+    </ng-container>
+    <ng-template #editEmail>
+      <input class="form-control" 
+             type="email"
+             [(ngModel)]="element.email"
+             (keyup.enter)="updateOwner(element.id!)"
+             placeholder="Ej: ejemplo@correo.com">
+    </ng-template>
+  </td>
+</ng-container>
+
+      <!-- COLUMNA DIRECCIÓN -->
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef> Dirección </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="editingId !== element?.id; else editAddress">
+            {{ element.address || 'No registrado' }}
+          </ng-container>
+          <ng-template #editAddress>
+            <input class="form-control"
+                   [(ngModel)]="element.address"
+                   (keyup.enter)="updateOwner(element.id!)"
+                   placeholder="Ej: Calle Principal #123">
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- COLUMNA ACCIONES -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="d-flex gap-2">
+            <button mat-button color="primary"
+                    (click)="editingId === element.id ? updateOwner(element.id!) : toggleEdit(element)">
+              <mat-icon>{{ editingId === element.id ? 'save' : 'edit' }}</mat-icon>
+            </button>
+            <button mat-button color="warn" (click)="deleteOwner(element.id!)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <ng-template #noData>
+      <p class="text-center text-muted mt-4">Aún no hay datos</p>
+    </ng-template>
+  </div>
+</div>

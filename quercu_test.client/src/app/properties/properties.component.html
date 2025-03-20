@@ -1,0 +1,197 @@
+<div class="container mt-4">
+  <h2>Propiedades</h2>
+
+  <!-- MENSAJES -->
+  <div *ngIf="showValidationMessage" class="alert alert-danger mb-3">
+    <ul class="mb-0">
+      <li *ngIf="newProperty.propertyTypeId <= 0">• Debes seleccionar un tipo de propiedad</li>
+      <li *ngIf="newProperty.ownerId <= 0">• Debes seleccionar un dueño</li>
+      <li *ngIf="newProperty.number.trim().length < 1">• El número debe tener al menos 1 carácter</li>
+      <li *ngIf="(newProperty.area === null || newProperty.area <= 0.1)">
+        • El área debe ser mayor a 0.1 m²
+      </li>
+      <li *ngIf="newProperty.address.trim().length < 5">• La dirección debe tener al menos 5 caracteres</li>
+    </ul>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success mb-3">
+    {{ successMessage }}
+  </div>
+
+  <!-- FORM -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-2">
+      <select class="form-select" [(ngModel)]="newProperty.propertyTypeId">
+        <option value="0">Tipo de propiedad *</option>
+        <option *ngFor="let type of propertyTypes" [value]="type.id">{{ type.description }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <select class="form-select" [(ngModel)]="newProperty.ownerId">
+        <option value="0">Dueño *</option>
+        <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <input type="text"
+             class="form-control"
+             [(ngModel)]="newProperty.number"
+             placeholder="Número *"
+             required
+             minlength="1">
+    </div>
+
+    <div class="col-md-3">
+      <input type="text"
+             class="form-control"
+             [(ngModel)]="newProperty.address"
+             placeholder="Dirección *"
+             required
+             minlength="5">
+    </div>
+
+    <div class="col-md-2">
+      <input type="number"
+             class="form-control"
+             [(ngModel)]="newProperty.area"
+             placeholder="Área (m²) *"
+             step="0.1"
+             min="0.1"
+             required>
+    </div>
+
+    <div class="col-md-2">
+      <input type="number"
+             class="form-control"
+             [(ngModel)]="newProperty.constructionArea"
+             placeholder="Área construcción (m²)"
+             step="0.1"
+             min="0">
+    </div>
+
+    <div class="col-md-1">
+      <button class="btn btn-primary w-100"
+              (click)="addProperty()">
+        Agregar
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-responsive">
+    <table *ngIf="dataSource.data.length > 0; else noData"
+           mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+      <!-- COLUMN No. -->
+      <ng-container matColumnDef="no">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{ dataSource.data.indexOf(element) + 1 }} </td>
+      </ng-container>
+
+      <!-- COLUMN NUMBER -->
+      <ng-container matColumnDef="number">
+        <th mat-header-cell *matHeaderCellDef> Número </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="editingId !== element.id; else editNumber">
+            {{ element.number }}
+          </ng-container>
+          <ng-template #editNumber>
+            <input class="form-control" [(ngModel)]="element.number" required minlength="1">
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- COLUMN ADDRESS -->
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef> Dirección </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="editingId !== element.id; else editAddress">
+            {{ element.address }}
+          </ng-container>
+          <ng-template #editAddress>
+            <input class="form-control"
+                   [(ngModel)]="element.address"
+                   required
+                   minlength="5">
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- COLUMN  AREA -->
+      <ng-container matColumnDef="area">
+        <th mat-header-cell *matHeaderCellDef> Área (m²) </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="editingId !== element.id; else editArea">
+            {{ element.area | number:'1.2-2' }}
+          </ng-container>
+          <ng-template #editArea>
+            <input type="number"
+                   class="form-control"
+                   [(ngModel)]="element.area"
+                   step="0.1"
+                   min="0.1"
+                   required>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- COLUMN CONSTRUCTION AREA -->
+      <ng-container matColumnDef="constructionArea">
+        <th mat-header-cell *matHeaderCellDef> Área Construcción </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="editingId !== element.id; else editConstruction">
+            {{ element.constructionArea ?? 'N/A' }}
+          </ng-container>
+          <ng-template #editConstruction>
+            <input type="number"
+                   class="form-control"
+                   [(ngModel)]="element.constructionArea"
+                   step="0.1"
+                   min="0">
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- COLUMN DUEÑO -->
+      <ng-container matColumnDef="owner">
+        <th mat-header-cell *matHeaderCellDef> Dueño </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.owner?.name || 'No asignado' }}
+        </td>
+      </ng-container>
+
+      <!-- COLUMN TYPE -->
+      <ng-container matColumnDef="propertyType">
+        <th mat-header-cell *matHeaderCellDef> Tipo </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.propertyType?.description || 'No asignado' }}
+        </td>
+      </ng-container>
+
+      <!-- COLUMN ACTIONS -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="d-flex gap-2">
+            <button mat-button color="primary"
+                    (click)="editingId === element.id ? updateProperty(element.id!) : toggleEdit(element)">
+              <mat-icon>{{ editingId === element.id ? 'save' : 'edit' }}</mat-icon>
+            </button>
+            <button mat-button color="warn" (click)="deleteProperty(element.id!)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <ng-template #noData>
+      <p class="text-center text-muted mt-4">Aún no hay propiedades registradas</p>
+    </ng-template>
+  </div>
+</div>
