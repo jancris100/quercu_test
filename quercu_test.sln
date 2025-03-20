@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "quercu_test.Server", "querc
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "quercu_test.client", "quercu_test.client\quercu_test.client.esproj", "{60EE1626-E826-420F-8392-B04A0F0B50A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "quercu_test.Tests", "quercu_test.Tests\quercu_test.Tests.csproj", "{7225A0F4-4035-418D-B20C-978715A0CE6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{60EE1626-E826-420F-8392-B04A0F0B50A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60EE1626-E826-420F-8392-B04A0F0B50A7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{60EE1626-E826-420F-8392-B04A0F0B50A7}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{7225A0F4-4035-418D-B20C-978715A0CE6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7225A0F4-4035-418D-B20C-978715A0CE6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7225A0F4-4035-418D-B20C-978715A0CE6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7225A0F4-4035-418D-B20C-978715A0CE6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

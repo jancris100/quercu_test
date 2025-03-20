@@ -1,0 +1,84 @@
+<div class="container mt-4">
+  <h2>Tipos de Propiedad</h2>
+
+  <!-- VALIDACION -->
+  <div *ngIf="showValidationMessage" class="alert alert-danger mb-3">
+    Por favor ingresa una descripción antes de agregar.
+  </div>
+
+  <!-- MENSAJE -->
+  <div *ngIf="successMessage" class="alert alert-success mb-3">
+    {{ successMessage }}
+  </div>
+  <!-- INPUT PARA AGREGAR NUEVO -->
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <input class="form-control"
+           type="text"
+           [(ngModel)]="newPropertyDescription"
+           placeholder="Nueva descripción"
+           (keyup.enter)="addPropertyType()"
+           (input)="showValidationMessage = false">
+    <button class="btn btn-primary" (click)="addPropertyType()">Agregar</button>
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-responsive mt-4">
+    <table *ngIf="dataSource.data.length > 0; else noData"
+           mat-table
+           [dataSource]="dataSource"
+           class="mat-elevation-z8">
+
+      <!-- COLUMNA No. (SECUENCIAL) -->
+      <ng-container matColumnDef="no">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element">
+          {{ dataSource.data.indexOf(element) + 1 }} <!-- Número secuencial -->
+        </td>
+      </ng-container>
+
+      <!-- COLUMNA DESCRIPCIÓN -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> Descripción </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="editingId !== element.id; else editField">
+            {{ element.description }}
+          </ng-container>
+          <ng-template #editField>
+            <input class="form-control"
+                   [(ngModel)]="element.description"
+                   (keyup.enter)="updatePropertyType(element.id!)">
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- COLUMNA ACCIONES -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="d-flex gap-2">
+            <button mat-button
+                    color="primary"
+                    (click)="editingId === element.id ? updatePropertyType(element.id!) : toggleEdit(element)">
+              <mat-icon>{{ editingId === element.id ? 'save' : 'edit' }}</mat-icon>
+            </button>
+            <button mat-button
+                    color="warn"
+                    (click)="deletePropertyType(element.id!)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- FILAS -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+
+    <!-- MENSAJE SIN DATOS -->
+    <ng-template #noData>
+      <p class="text-center text-muted mt-4">Aún no hay datos</p>
+    </ng-template>
+  </div>
+</div>
